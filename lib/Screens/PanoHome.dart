@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:jhelypanorama/Api/Get.dart';
 import 'package:http/http.dart' as http;
+import 'package:jhelypanorama/Provider/MyProvider.dart';
 import 'package:jhelypanorama/Screens/Panoview.dart';
+import 'package:provider/provider.dart';
 
 class PanoHome extends StatefulWidget {
   @override
@@ -12,6 +14,11 @@ class PanoHome extends StatefulWidget {
 }
 
 class _PanoHomeState extends State<PanoHome> {
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     double HEIGHT=MediaQuery.of(context).size.height;
@@ -23,7 +30,7 @@ class _PanoHomeState extends State<PanoHome> {
         backgroundColor: Colors.white,
         leading: Image.asset("assets/ic_launcher_foreground.png",fit: BoxFit.contain,),
     ),
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Container(
           width: WIDTH,
           height: HEIGHT,
@@ -35,17 +42,18 @@ class _PanoHomeState extends State<PanoHome> {
                 if(response.statusCode==200){
                   var ggg = json.decode(response.body);
                  var list =List.from(ggg);
-                 print(list);
                   return ListView.builder(
                     itemCount: list.length,
                     itemBuilder: (context,index){
-                      print(list[index]);
                       return InkWell(
                         child: ListTile(
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context){
-                                  return PanoView(properties: list[index]);
+                                  return ChangeNotifierProvider.value(
+                                      value: MyProvider(),
+                                      child: PanoView(properties: list[index])
+                                  );
                                 }
                             ));
                           },
